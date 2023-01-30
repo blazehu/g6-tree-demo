@@ -1,6 +1,6 @@
 # g6-tree-demo
 G6 拓扑图例子, k8s使用helm部署zookeeper的一个图例。
-![](/Users/blazehu/Projects/tmp/g6-tree-demo/src/assets/demo.png)
+![](https://github.com/blazehu/g6-tree-demo/blob/main/src/assets/demo.png)
 
 ## Project setup
 ```
