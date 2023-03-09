@@ -80,8 +80,9 @@ export default {
             id: '4',
             label: 'zk-zookeeper',
             kind: 'StatefulSet',
-            health: 'Healthy',
+            health: 'Progressing',
             status: 'Synced',
+            phase: 'StartSync',
           },
           {
             id: '5',
@@ -118,7 +119,7 @@ export default {
             id: '11',
             label: 'zk-zookeeper-0',
             kind: 'Pod',
-            health: 'Healthy',
+            health: 'Progressing',
           },
           {
             id: '12',

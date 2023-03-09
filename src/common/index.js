@@ -182,6 +182,65 @@ export const registerResourceNode = function () {
             this.drawLabel(cfg, group);
             this.drawHealthIcon(cfg, group);
             this.drawSyncIcon(cfg, group);
+            if (cfg?.phase === 'StartSync' || cfg?.phase === 'FinishSync') {
+                this.drawBackgroundAnimate(cfg, group);
+            }
+            return shape;
+        },
+        /**
+         * 绘制模型Tips：节点更新动画
+         * @param {Object} cfg 数据配置项
+         * @param {Object} group Group实例
+         */
+        drawBackgroundAnimate(cfg, group) {
+            const w = cfg.size[0];
+            const h = cfg.size[1];
+
+            const backShape = 20;
+            const shape = group.addShape('rect', {
+                zIndex: -3,
+                attrs: {
+                    x: -w / 2 - backShape / 2,
+                    y: -h / 2 - backShape / 2,
+                    fill: 'rgba(228,229,229,0.79)',
+                    opacity: 0.6,
+                    width: cfg.size[0] + backShape,
+                    height: cfg.size[1] + backShape,
+                    radius: [6, 6],
+                },
+                name: 'back-shape',
+            });
+            group.sort();
+            shape.animate(
+                {
+                    x: -w / 2 - backShape,
+                    y: -h / 2 - backShape,
+                    width: cfg.size[0] + backShape * 2,
+                    height: cfg.size[1] + backShape * 2,
+                    opacity: 0.3,
+                },
+                {
+                    duration: 1000,
+                    easing: 'easeCubic',
+                    delay: 0,
+                    repeat: true, // repeat
+                },
+            );
+            shape.animate(
+                {
+                    x: -w / 2 - backShape * 1.5,
+                    y: -h / 2 - backShape * 1.5,
+                    width: cfg.size[0] + backShape * 3,
+                    height: cfg.size[1] + backShape * 3,
+                    opacity: 0.1,
+                },
+                {
+                    duration: 1000,
+                    easing: 'easeCubic',
+                    delay: 500,
+                    repeat: true, // repeat
+                },
+            );
             return shape;
         },
         /**
@@ -338,7 +397,7 @@ export const registerResourceNode = function () {
                 }
                 const {offsetY} = logoIcon;
                 const img = getHealthImg(cfg);
-                group.addShape('image', {
+                const shape = group.addShape('image', {
                     attrs: {
                         x: offsetX,
                         y: -2 + offsetY + 7,
@@ -350,6 +409,32 @@ export const registerResourceNode = function () {
                     className: 'rect-health-icon',
                     name: 'rect-health-icon',
                 });
+                if (cfg?.health === HealthStatuses.Progressing) {
+                    const [imageWidth, imageHeight] = [18, 18] ;
+                    shape.animate(
+                        (ratio) => {
+                            // 每一帧的操作，入参 ratio：这一帧的比例值（Number）。返回值：这一帧需要变化的参数集（Object）。
+                            const { x, y } = shape.attr();
+                            const animateX = x + imageWidth / 2;
+                            const animateY = y + imageHeight / 2;
+                            const matrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+                            // 返回这一帧需要的参数集，本例中只有目标矩阵
+                            const newMatrix = G6.Util.transform(matrix, [
+                                ['t', -animateX, -animateY],
+                                ['r', ratio * Math.PI * 2],
+                                ['t', animateX, animateY],
+                            ]);
+                            return {
+                                matrix: newMatrix,
+                            };
+                        },
+                        {
+                            repeat: true, // 动画重复
+                            duration: 1000,
+                            easing: 'easeLinear',
+                        },
+                    );
+                }
             }
         },
         /**
