@@ -34,9 +34,53 @@ export default {
       const { data } = this.initData();
       this.graph = this.createTree();
       this.updateSize();
-      this.graph.data(data);
-      this.graph.render();
+      this.graph.read(data);
       this.graph.zoomTo(0.75, { x: 128, y: 369 }, true, { duration: 10 });
+    },
+    updateTree() {
+      const data = {
+        // 点集
+        nodes: [
+          {
+            id: '1',
+            label: 'zk',
+            kind: 'Helm',
+            health: 'Healthy',
+            status: 'Synced',
+            logoIcon: {
+              img: 'https://blazehu.com/images/k8s/status/helm.svg',
+              offsetY: 0,
+            },
+          },
+          {
+            id: '2',
+            label: 'zk-zookeeper',
+            kind: 'Service',
+            health: 'Healthy',
+            status: 'Synced',
+          },
+          {
+            id: '3',
+            label: 'zk-zookeeper-headless',
+            kind: 'Service',
+            health: 'Healthy',
+            status: 'Synced',
+          },
+        ],
+        // 边集
+        edges: [
+          {
+            source: '1', // String，必须，起始点 id
+            target: '2', // String，必须，目标点 id
+          },
+          {
+            source: '1',
+            target: '3',
+          },
+        ],
+      };
+      this.graph.changeData(data);
+      this.graph.refresh();
     },
     updateSize() {
       const container = document.getElementById('mountNode');
