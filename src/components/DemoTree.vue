@@ -31,23 +31,20 @@ export default {
       registerFlowLine();
     },
     initTree() {
-      const { maxLayerCount, data } = this.initData();
+      const { data } = this.initData();
       this.graph = this.createTree();
-      this.updateSize(maxLayerCount);
+      this.updateSize();
       this.graph.data(data);
       this.graph.render();
       this.graph.zoomTo(0.75, { x: 128, y: 369 }, true, { duration: 10 });
     },
-    updateSize(count) {
+    updateSize() {
       const container = document.getElementById('mountNode');
       if (container === null) {
         return;
       }
-      const nodeHeight = 72;
-      const nodeSepHeight = 25;
-      const nodePadding = 148;
       const width = container.scrollWidth || window.outerWidth - 90;
-      const height = count < 3 ? window.outerHeight - 150 : nodeHeight * count + nodeSepHeight * count + nodePadding;
+      const height = container.scrollHeight || window.outerHeight - 150;
       this.graph.changeSize(width, height);
     },
     initData() {
@@ -220,7 +217,15 @@ export default {
         height,
         fitView: true,
         modes: {
-          default: ['drag-canvas'],
+          default: [{
+            type: 'drag-canvas',
+            // ... 其他配置
+          }, {
+            type: 'scroll-canvas',
+            direction: 'y',
+            scalableRange: height * -0.5,
+            // ... 其他配置
+          }],
         },
         layout: {
           type: 'dagre',
